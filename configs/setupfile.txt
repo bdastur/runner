@@ -1,0 +1,28 @@
+##############################################################
+# The Runner config file.
+##############################################################
+
+[STAGE_ONE]
+dependency = 
+group = "one"
+id = 1
+module = "samples.one"
+
+[STAGE_TWO]
+dependency = 
+group =
+id = 2
+module = "samples.two"
+
+[STAGE_FOUR]
+dependency =
+group =
+id = 4
+module = "samples.four"
+
+[STAGE_THREE]
+dependency = 
+group = 
+id = 3
+module = "samples.three"
+

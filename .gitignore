@@ -1,0 +1,8 @@
+*.pyc
+*.local*
+*.json
+
+#VIM plugings: temp files and folders
+.ropeproject/
+*cscope*
+

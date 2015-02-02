@@ -10,6 +10,8 @@ import sys
 import os
 import re
 from ConfigParser import SafeConfigParser
+import logger
+import logging
 
 
 def get_absolute_path_for_file(file_name, splitdir=None):
@@ -34,13 +36,6 @@ def get_absolute_path_for_file(file_name, splitdir=None):
     return abs_file_path
 
 
-def foobar():
-    '''
-    dummy handle
-    '''
-    print "Foobar: ", __name__
-
-
 class RunnerConfig(object):
     '''
     The class handles the parsing of the runner setup
@@ -50,7 +45,6 @@ class RunnerConfig(object):
         '''
         Initialize RunnerConfig
         '''
-        print "Setup configuration"
         self.setupfile = get_absolute_path_for_file("./configs/setupfile.txt")
         self.cfgparser = SafeConfigParser()
         self.cfgparser.read(self.setupfile)
@@ -110,10 +104,15 @@ class Runner(object):
         '''
         Initialize Runner.
         '''
-        print "Runner init."
         self.runcfg = RunnerConfig()
         self.operations = []
         self.populate_runner_info()
+
+        logger_inst = logger.Logger(name="Runner", level="debug")
+        self.log = logger_inst.get_logger()
+        self.log.setLevel(logging.DEBUG)
+        self.log.debug("Start Runner...")
+
 
 
     def validate_operation_module(self, module):
@@ -123,7 +122,7 @@ class Runner(object):
         '''
         for func_name in ['run', 'checkstart']:
             if not hasattr(module, func_name):
-                raise ImportError("Module %s has not implemented %s function" \
+                raise ImportError("Module %s has not implemented %s function"
                                   % (module.__class__, func_name))
 
 
@@ -136,9 +135,7 @@ class Runner(object):
             operation['status'] = Runner.OPER_STATUS_NOTRUNNING
             __import__(operation['modulename'])
             operation['module'] = sys.modules[operation['modulename']]
-            print "operation module: ", operation['module']
             self.validate_operation_module(operation['module'])
-        print "Operations: ", self.operations
 
 
     def runner_run_sequential(self):
@@ -150,7 +147,7 @@ class Runner(object):
         #For all the stages. start with the lowest id.
         for operation in soperlist:
             #Lets get the lowest operation
-            print "operation: ", operation['modulename'], " starting.."
+            self.log.info("Operation: %s starting...", operation['modulename'])
             operation['module'].run()
 
 
